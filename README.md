@@ -1,4 +1,4 @@
-# Caddy jspm-hot-reloader
+# caddy-hot-loader
 For use with the [Caddy HTTP/2 Web Server](https://caddyserver.com/)
 
 Requires [caddy-hot-watcher](https://github.com/jhkennedy4/caddy-hot-watcher)
@@ -14,7 +14,7 @@ Only tested with ES6 modules, no test suite in place (yet), temporarily removed 
 
 ## Install
 ```
-jspm i github:jhkennedy4/jspm-hot-reloader
+jspm i github:jhkennedy4/caddy-hot-loader
 ```
 And if $GOPATH/bin is in your $PATH
 ```
