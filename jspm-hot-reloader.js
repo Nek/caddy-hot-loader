@@ -1,15 +1,16 @@
-import socketIO from 'socket.io-client'
 import Emitter from 'weakee'
 import cloneDeep from 'lodash.clonedeep'
 
 class JspmHotReloader extends Emitter {
   constructor (backendUrl) {
     super()
-    this.socket = socketIO(backendUrl)
+    this.socket = new window.WebSocket(backendUrl)
+
     this.socket.on('connect', () => {
       console.log('hot reload connected to watcher on ', backendUrl)
       this.socket.emit('identification', navigator.userAgent)
     })
+
     this.socket.on('change', (ev) => {
       let moduleName = ev.path
       this.emit('change', moduleName)
@@ -19,6 +20,7 @@ class JspmHotReloader extends Emitter {
         this.hotReload(moduleName)
       }
     })
+
     this.socket.on('disconnect', () => {
       console.log('hot reload disconnected from ', backendUrl)
     })
