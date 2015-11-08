@@ -6,14 +6,14 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jhkennedy4/jspm-hot-reloader.git"
+    "url": "git+https://github.com/jhkennedy4/caddy-hot-loader.git"
   },
   "author": "jhkennedy4@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jhkennedy4/jspm-hot-reloader/issues"
+    "url": "https://github.com/jhkennedy4/caddy-hot-loader/issues"
   },
-  "homepage": "https://github.com/jhkennedy4/jspm-hot-reloader#readme",
+  "homepage": "https://github.com/jhkennedy4/caddy-hot-loader#readme",
   "dependencies": {
     "lodash": "^3.10.1"
   },
