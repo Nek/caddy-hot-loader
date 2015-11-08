@@ -1,5 +1,5 @@
 {
-  "name": "jspm-hot-reloader",
+  "name": "caddy-hot-loader",
   "version": "0.1.0",
   "description": "Caddy JSPM utility for hot reloading parts of your dependency tree",
   "main": "jspm-hot-reloader.js",
