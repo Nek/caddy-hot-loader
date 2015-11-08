@@ -1,5 +1,5 @@
 # Caddy jspm-hot-reloader
-For use with Caddy HTTP/2 Web Server
+For use with the [Caddy HTTP/2 Web Server](https://caddyserver.com/)
 
 Requires [caddy-hot-watcher](https://github.com/jhkennedy4/caddy-hot-watcher)
 
