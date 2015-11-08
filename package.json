@@ -1,40 +1,31 @@
 {
-  "name": "jspm-hot-reloader",
-  "version": "0.3.0",
-  "description": "JSPM utility for hot reloading parts of your dependency tree",
+  "name": "caddy-hot-reloader",
+  "version": "0.1.0",
+  "description": "Caddy JSPM utility for hot reloading parts of your dependency tree",
   "main": "jspm-hot-reloader.js",
-  "scripts": {
-    "precommit": "npm test",
-    "pretest": "node_modules/.bin/standard",
-    "test": "node run-tests"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/capaj/jspm-hot-reloader.git"
+    "url": "git+https://github.com/jhkennedy4/jspm-hot-reloader.git"
   },
-  "author": "capajj@gmail.com",
+  "author": "jhkennedy4@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/capaj/jspm-hot-reloader/issues"
+    "url": "https://github.com/jhkennedy4/jspm-hot-reloader/issues"
   },
-  "homepage": "https://github.com/capaj/jspm-hot-reloader#readme",
+  "homepage": "https://github.com/jhkennedy4/jspm-hot-reloader#readme",
   "dependencies": {
-    "socket.io-client": "^1.3.7",
-    "weakee": "^0.9.1",
-    "lodash.clonedeep": "^3.0.2"
+    "lodash": "^3.10.1"
   },
   "devDependencies": {
-    "babel": "^5.8.23",
-    "chai": "^3.3.0",
-    "husky": "^0.10.1",
-    "mocha": "^2.3.3",
     "standard": "^5.3.1"
   },
   "jspm": {
-    "dependencies": {
-      "socket.io-client": "github:socketio/socket.io-client@^1.3.7",
-      "weakee": "npm:weakee@^0.9.1",
-      "lodash.clonedeep": "npm:lodash.clonedeep@^3.0.2"
+    "dependencies": {},
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
     }
   }
 }

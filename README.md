@@ -1,4 +1,4 @@
-# jspm-hot-reloader
+# Caddy hot-reloader
 connects to an event source such as:
 - [chokidar-socket-emitter](https://github.com/capaj/chokidar-socket-emitter) 
 - atom plugin [jspm-dev-buddy](https://atom.io/packages/jspm-dev-buddy)
@@ -7,7 +7,8 @@ and reloads your ES6 modules as you change them. Similar to browserify hot modul
 
 ## Install
 ```
-jspm i github:capaj/jspm-hot-reloader
+jspm i github:jhkennedy4/jspm-hot-reloader
+go get github.com/jhkennedy/caddy-hot-watcher
 ```
 
 ## Usage
@@ -15,7 +16,7 @@ Put this in your index.html(or anywhere really)
 ```javascript
 
 if (location.origin.match(/localhost/)) { 
-  System.import('capaj/jspm-hot-reloader').then(function(HotReloader){
+  System.import('jhkennedy4/hot-reloader').then(function(HotReloader){
     new HotReloader.default('http://localhost:8090')  // chokidar-socket-emitter port
   })
 }
