@@ -6,7 +6,7 @@ class JspmHotReloader {
 
     this.socket.onmessage = (e) => {
       console.log(e.data)
-      if (e.data === 'connected') return
+      if (e.data === 'caddy-hot-watcher connected') return
 
       let moduleName = e.data
 
