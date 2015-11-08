@@ -1,8 +1,8 @@
 {
   "name": "caddy-hot-loader",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "Caddy JSPM utility for hot reloading parts of your dependency tree",
-  "main": "jspm-hot-reloader.js",
+  "main": "caddy-hot-loader.js",
   "scripts": {},
   "repository": {
     "type": "git",
