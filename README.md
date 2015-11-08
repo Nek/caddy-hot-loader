@@ -1,46 +1,64 @@
-# Caddy hot-reloader
-connects to an event source such as:
-- [chokidar-socket-emitter](https://github.com/capaj/chokidar-socket-emitter) 
-- atom plugin [jspm-dev-buddy](https://atom.io/packages/jspm-dev-buddy)
+# Caddy jspm-hot-reloader
+For use with Caddy HTTP/2 Web Server
 
-and reloads your ES6 modules as you change them. Similar to browserify hot module replacement, but running in your browser.
+Requires [caddy-hot-watcher](https://github.com/jhkennedy4/caddy-hot-watcher)
+
+Reload your ES6 modules as you change them. Similar to browserify hot module replacement, but running in your browser.
+
+## About
+This project is a fork of [Jiri Spac](https://github.com/capaj)'s [jspm-hot-reloader](https://github.com/capaj/jspm-hot-reloader) rewritten without a Socket.io dependency.
+Instead, it relies on Caddy's websocket middleware and `caddy-hot-watcher` to alert System.js to filesystem changes.
+
+#### Changes
+Only tested with ES6 modules, no test suite in place (yet), temporarily removed support for CommonJS modules.
 
 ## Install
 ```
 jspm i github:jhkennedy4/jspm-hot-reloader
+```
+And if $GOPATH/bin is in your $PATH
+```
 go get github.com/jhkennedy/caddy-hot-watcher
 ```
 
 ## Usage
 Put this in your index.html(or anywhere really)
 ```javascript
-
-if (location.origin.match(/localhost/)) { 
-  System.import('jhkennedy4/hot-reloader').then(function(HotReloader){
-    new HotReloader.default('http://localhost:8090')  // chokidar-socket-emitter port
+if (location.origin.match(/localhost/)) {
+  // enable debug
+  System.import('jhkennedy4/caddy-hot-loader').then(function (HotReloader) {
+    // caddy websocket endpoint
+    let reloadPath = location.host + '/hot-watcher'
+    new HotReloader.default(reloadPath)
   })
 }
 ```
+
+And add the following line to your Caddyfile:
+```
+websocket /hot-watcher caddy-hot-watcher
+```
+
 You can drop the if statement, but it is nice and convenient to load reloader only for when on localhost. That way you can go into production without changing anything.
 
 ## Examples
 
-Boilerplate projects set up for hot reloading modules you can fork and use with 3 simple terminal commands(git clone XXX && npm i && npm start):
-- [React](https://github.com/capaj/jspm-react)
-- [Mithril.js](https://github.com/capaj/jspm-mithril)
-- [Angular 2](https://github.com/capaj/jspm-ng2)
-- [Angular - NG6-starter](https://github.com/capaj/NG6-starter)
+Boilerplate projects set up for hot reloading modules:
+- [React](https://github.com/jhkennedy4/jspm-pages)
 
+TODO:
+Should soon be able to be deployed straight to GithubPages
 
 ## Why
+System.js and HTTP/2 are the future. Caddy supports HTTP/2 out of the box, allowing you to take advantage of all the benefits of using a browser based module loader, skip a bundle step, and live in the future.
 
-We're Javascript programmers. We should not be building our apps for development. Many folks dislike JSPM because of how slow it is. JSPM deserves another shot, because it can be faster, more robust and more reliable than any existing alternative. This simple package proves it. Especially for larger codebases, SPAs and such-reliable hot reloadable modules are a crucial development tool. Webpack hot reloading tools are hacky-they might preserve component state, but they sacrifice robustness. Very often a change in a source code doesn't manifestate after webpacks hot reload. This will never happen with JSPM's hot reload.
+Using Caddy and JSPM, going from development to production no longer requires a build step for your static assets.
 
 ## Preserving state
-If you want some state to persist through hot reload, just put it in a module separate from the component. I personally use POJOs with observation, but you are free to use any kind of value store, as long as it sits in separate module from your reloaded component.
+If you want some state to persist through hot reload, just put it in a module separate from the component. You are free to use any kind of value store, as long as it sits in separate module from your reloaded component.
 
 ## How
-When a change event is emitted on socket.io, we match a module in System._loader.moduleRecords.
+When a change event is emitted by `caddy-hot-watcher`, we match a module in System._loader.moduleRecords.
 If a match is found, we then aggressively delete the changed module and recursively all modules which import it directly or indirectly via other modules. This ensures we always have the latest version of code running, but we don't force the browser into unnecessary work.
 Last step is to import again all modules we deleted, by calling import on the one that changed-module hierarchy will make sure all get loaded again.
 
@@ -54,14 +72,14 @@ export function __unload(){
 This is needed for example for [Angular](https://github.com/capaj/NG6-starter/blob/eb988ef00685390618b5dad57635ce80c6d52680/client/app/app.js#L42), which needs clean DOM every time it bootstraps.
 
 ## Credit
-Most of the credit for this awesome engineering feat should go to [Guy Bedford](https://github.com/guybedford). He paved me a way, I simply followed it.
+We're a few layers deep here. This would not be possible without [Jiri Spac](https://github.com/capaj)'s excellent [jspm-hot-reloader](https://github.com/capaj/jspm-hot-reloader). If you are not interested in using Caddy, that's the place to go.
+
+He credits [Guy Bedford](https://github.com/guybedford), who I can only assume is a wonderful fellow who I owe dearly secondhand.
 
 ## Contributing
 Code is written in [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
-Tests are run as usual: `npm test`
-
 1. fork it
 2. write your code
 3. open PR
-4. lay back and if you want to speed it up, hit me up on [twitter](https://twitter.com/capajj)
+4. lay back and if you want to speed it up, hit me up on [twitter](https://twitter.com/jhkennedy)

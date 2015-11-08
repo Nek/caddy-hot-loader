@@ -1,66 +1,43 @@
-import Emitter from 'weakee'
-import cloneDeep from 'lodash.clonedeep'
+import { cloneDeep } from 'lodash'
 
-class JspmHotReloader extends Emitter {
+class JspmHotReloader {
   constructor (backendUrl) {
-    super()
-    this.socket = new window.WebSocket(backendUrl)
+    this.socket = new window.WebSocket('ws://' + backendUrl)
 
-    this.socket.on('connect', () => {
-      console.log('hot reload connected to watcher on ', backendUrl)
-      this.socket.emit('identification', navigator.userAgent)
-    })
+    this.socket.onmessage = (e) => {
+      console.log(e.data)
+      if (e.data === 'connected') return
 
-    this.socket.on('change', (ev) => {
-      let moduleName = ev.path
-      this.emit('change', moduleName)
+      let moduleName = e.data
+
       if (moduleName === 'index.html') {
         document.location.reload(true)
       } else {
         this.hotReload(moduleName)
       }
-    })
+    }
 
-    this.socket.on('disconnect', () => {
-      console.log('hot reload disconnected from ', backendUrl)
-    })
-    this.pushImporters(System._loader.loads)
+    this.socket.onerror = (e) => {
+      console.log(e)
+    }
+
+    this.socket.onopen = (e) => {
+      console.log('hot reload connected to watcher on', backendUrl)
+    }
+
+    this.socket.onclose = () => {
+      console.log('hot reload disconnected from', backendUrl)
+    }
+
+    console.log(System)
   }
-  pushImporters (moduleMap, overwriteOlds) {
-    Object.keys(moduleMap).forEach((moduleName) => {
-      let mod = System._loader.loads[moduleName]
-      if (!mod.importers) {
-        mod.importers = []
-      }
-      mod.deps.forEach((dependantName) => {
-        let normalizedDependantName = mod.depMap[dependantName]
-        let dependantMod = System._loader.loads[normalizedDependantName]
-        if (!dependantMod) {
-          return
-        }
-        if (!dependantMod.importers) {
-          dependantMod.importers = []
-        }
-        if (overwriteOlds) {
-          let imsIndex = dependantMod.importers.length
-          while (imsIndex--) {
-            if (dependantMod.importers[imsIndex].name === mod.name) {
-              dependantMod.importers[imsIndex] = mod
-              return
-            }
-          }
-        }
-        dependantMod.importers.push(mod)
-      })
-    })
-  }
+
   deleteModule (moduleToDelete) {
     let name = moduleToDelete.name
     if (!this.modulesJustDeleted[name]) {
       let exportedValue
       this.modulesJustDeleted[name] = moduleToDelete
       if (!moduleToDelete.exports) {
-        // this is a module from System._loader.loads
         exportedValue = System.get(name)
         if (!exportedValue) {
           throw new Error('Not yet solved usecase, please reload whole page')
@@ -72,10 +49,11 @@ class JspmHotReloader extends Emitter {
         exportedValue.__unload() // calling module unload hook
       }
       System.delete(name)
-      this.emit('deleted', moduleToDelete)
       console.log('deleted a module ', name)
     }
   }
+
+  // what is a module record?
   getModuleRecord (moduleName) {
     return System.normalize(moduleName).then(normalizedName => {
       let aModule = System._loader.moduleRecords[normalizedName]
@@ -95,6 +73,8 @@ class JspmHotReloader extends Emitter {
       return aModule
     })
   }
+
+  // the magic hotness
   hotReload (moduleName) {
     const self = this
     const start = new Date().getTime()
@@ -107,17 +87,19 @@ class JspmHotReloader extends Emitter {
     return this.getModuleRecord(moduleName).then(module => {
       this.deleteModule(module)
       const toReimport = []
+
       function deleteAllImporters (importersToBeDeleted) {
         importersToBeDeleted.forEach((importer) => {
           self.deleteModule(importer)
           if (importer.importers.length === 0 && toReimport.indexOf(importer.name) === -1) {
             toReimport.push(importer.name)
           } else {
-            // recourse
+            // recurse
             deleteAllImporters(importer.importers)
           }
         })
       }
+
       if (module.importers.length === 0) {
         toReimport.push(module.name)
       } else {
@@ -129,18 +111,16 @@ class JspmHotReloader extends Emitter {
           console.log('reimported ', moduleName)
         })
       })
+
       return Promise.all(promises).then(() => {
-        this.emit('allReimported', toReimport)
-        this.pushImporters(this.modulesJustDeleted, true)
         console.log('all reimported in ', new Date().getTime() - start, 'ms')
       }, (err) => {
-        this.emit('error', err)
         console.error(err)
         System._loader.moduleRecords = self.backup.moduleRecords
         System._loader.loads = self.backup.loads
       })
     }, (err) => {
-      this.emit('moduleRecordNotFound', err)
+      console.log(err)
       // not found any module for this file, not really an error
     })
   }
