@@ -7,7 +7,7 @@ Reload your ES6 modules as you change them. Similar to browserify hot module rep
 
 ## About
 This project is a fork of [Jiri Spac](https://github.com/capaj)'s [jspm-hot-reloader](https://github.com/capaj/jspm-hot-reloader) rewritten without a Socket.io dependency.
-Instead, it relies on Caddy's websocket middleware and `caddy-hot-watcher` to alert System.js to filesystem changes.
+Instead, it relies on Caddy's websocket middleware and [caddy-hot-watcher](https://github.com/jhkennedy4/caddy-hot-watcher) to alert System.js to filesystem changes.
 
 #### Changes
 Only tested with ES6 modules, no test suite in place (yet), temporarily removed support for CommonJS modules.
