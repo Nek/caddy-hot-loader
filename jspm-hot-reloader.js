@@ -22,17 +22,17 @@ class JspmHotReloader extends Emitter {
     this.socket.on('disconnect', () => {
       console.log('hot reload disconnected from ', backendUrl)
     })
-    this.pushImporters(System.loads)
+    this.pushImporters(System._loader.loads)
   }
   pushImporters (moduleMap, overwriteOlds) {
     Object.keys(moduleMap).forEach((moduleName) => {
-      let mod = System.loads[moduleName]
+      let mod = System._loader.loads[moduleName]
       if (!mod.importers) {
         mod.importers = []
       }
       mod.deps.forEach((dependantName) => {
         let normalizedDependantName = mod.depMap[dependantName]
-        let dependantMod = System.loads[normalizedDependantName]
+        let dependantMod = System._loader.loads[normalizedDependantName]
         if (!dependantMod) {
           return
         }
@@ -58,7 +58,7 @@ class JspmHotReloader extends Emitter {
       let exportedValue
       this.modulesJustDeleted[name] = moduleToDelete
       if (!moduleToDelete.exports) {
-        // this is a module from System.loads
+        // this is a module from System._loader.loads
         exportedValue = System.get(name)
         if (!exportedValue) {
           throw new Error('Not yet solved usecase, please reload whole page')
@@ -78,7 +78,7 @@ class JspmHotReloader extends Emitter {
     return System.normalize(moduleName).then(normalizedName => {
       let aModule = System._loader.moduleRecords[normalizedName]
       if (!aModule) {
-        aModule = System.loads[normalizedName]
+        aModule = System._loader.loads[normalizedName]
         if (aModule) {
           return aModule
         }
@@ -98,7 +98,7 @@ class JspmHotReloader extends Emitter {
     const start = new Date().getTime()
     this.backup = { // in case some module fails to import
       moduleRecords: cloneDeep(System._loader.moduleRecords),
-      loads: cloneDeep(System.loads)
+      loads: cloneDeep(System._loader.loads)
     }
 
     this.modulesJustDeleted = {}
@@ -135,7 +135,7 @@ class JspmHotReloader extends Emitter {
         this.emit('error', err)
         console.error(err)
         System._loader.moduleRecords = self.backup.moduleRecords
-        System.loads = self.backup.loads
+        System._loader.loads = self.backup.loads
       })
     }, (err) => {
       this.emit('moduleRecordNotFound', err)
