@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/jhkennedy4/caddy-hot-loader#readme",
   "dependencies": {
-    "lodash": "^3.10.1"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "standard": "^5.3.1"
